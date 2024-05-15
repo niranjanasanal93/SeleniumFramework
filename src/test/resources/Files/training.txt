@@ -1,9 +1,0 @@
-echo "# Selenium" >> README.md
-git init
-git add README.md
-git commit -m "first commit"
-git branch -M main
-git remote add origin https://github.com/niranjanasanal93/Selenium.git
-git push -u origin main
-
-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
