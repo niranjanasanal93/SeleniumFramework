@@ -13,19 +13,18 @@ import java.time.Duration;
 
 public class LoginUI extends AutomationWrapper {
 
-    @Test(priority = 1)
-    public void titleTest(){
-        String  actualtitle= driver.getTitle();
-        Assert.assertEquals(actualtitle,"OrangeHRM");
-        System.out.println(actualtitle);
-
+    @Test(groups = {"ui","smoke"})
+    public void titleTest()
+    {
+        String actualTitle=driver.getTitle();
+        Assert.assertEquals(actualTitle, "OrangeHRM");
     }
-    @Test(priority=2)
-    public void applicationDiscriptionTest(){
 
-        String actualtext=driver.findElement(By.xpath("//p[contains(normalize-space(),'OS')]")).getText();
-        Assert.assertEquals(actualtext,"OrangeHRM OS 5.6.1");
-        System.out.println(actualtext);
-
+    @Test(groups = {"ui"})
+    public void applicationDescriptionTest()
+    {
+        String actualVersion=driver.findElement(By.xpath("//p[contains(normalize-space(),'OS')]")).getText();
+        Assert.assertEquals(actualVersion, "OrangeHRM OS 5.6.1");
     }
+
 }

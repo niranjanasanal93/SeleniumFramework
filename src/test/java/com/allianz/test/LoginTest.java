@@ -1,39 +1,40 @@
 package com.allianz.test;
 
-import com.allianz.base.AutomationWrapper;
-import org.openqa.selenium.By;
 import org.testng.Assert;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.allianz.base.AutomationWrapper;
+import com.allianz.pages.DashboardPage;
+import com.allianz.pages.LoginPage;
+import com.allianz.utils.DataUtils;
+import com.aventstack.extentreports.Status;
+
 public class LoginTest extends AutomationWrapper {
-    @Test
-    public void validLoginTest(){
-        driver.findElement(By.name("username")).sendKeys("Admin");
-        driver.findElement(By.name("password")).sendKeys("admin123");
-        String header= driver.findElement(By.xpath("//h6[contains(normalize-space(),Dashboard)]")).getText();
-        Assert.assertEquals(header,"Dashboard");
+    @Test(dataProvider = "commonDataProvider", dataProviderClass = DataUtils.class,groups = {"login","smoke"})
+    public void validLoginTest(String username, String password, String expectedHeader) {
 
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.enterUsername(username);
+        test.log(Status.INFO, "Entered username as "+username);
+        loginPage.enterPassword(password);
+        test.log(Status.INFO, "Entered password as "+password);
+        loginPage.clickOnLogin();
+        test.log(Status.INFO, "Clicked on login");
+
+        DashboardPage dashboardPage=new DashboardPage(driver);
+        String actualHeader = dashboardPage.getDashboardHeader();
+        test.log(Status.INFO, "Actual header "+actualHeader);
+        Assert.assertEquals(actualHeader, expectedHeader);
     }
-    @DataProvider
-    public Object[][] invalidLoginData(){
-        Object[][] data= new Object[2][3];
-        data[0][0]="john";
-        data[0][1]="john123";
-        data[0][2]="Invalid credentials";
-        data[1][0]="saul";
-        data[1][1]="saul123";
-        data[1][2]="Invalid credentials";
 
-        return data;
+    @Test(dataProvider = "commonDataProvider", dataProviderClass = DataUtils.class,groups = {"login"})
+    public void invalidLoginTest(String username, String password, String expectedError) {
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.enterUsername(username);
+        loginPage.enterPassword(password);
+        loginPage.clickOnLogin();
 
+        String actualError =loginPage.getInvalidErrorMessage();
+        Assert.assertEquals(actualError, expectedError);
     }
-@Test(dataProvider = "invalidLoginData")
-    public void invalidLogintest(String username,String password, String expectedError){
-    driver.findElement(By.name("username")).sendKeys("john");
-    driver.findElement(By.name("password")).sendKeys("john123");
-    driver.findElement(By.xpath("//button[normalize-space()='Login']")).click();
-    String actualError= driver.findElement(By.xpath("//p[contains(normalize-space(),'Invalid')]")).getText();
-    Assert.assertEquals(actualError,expectedError);
-}
 }
